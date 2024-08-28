@@ -6,16 +6,17 @@ const openai = new OpenAI({
   apiKey: "sk-RgOFiwhbZlTIsssv0Ew5irRGDCls5hzAZjuDQGeSa7nSQj1I",
 });
 
-async function getTest() {
-  console.log("get test");
+async function getTest(res) {
   const stream = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: [{ role: "user", content: "西瓜好不好吃" }],
     stream: true
   });
   for await (const chunk of stream) {
-    console.log(chunk.choices[0].delta.content || '')
+    const word = chunk.choices[0].delta.content || ''
+    res.write('data:' + word + '\n\n')
   }
+  res.end()
   // console.log(completion);
   // console.log(completion.choices[0])
 }

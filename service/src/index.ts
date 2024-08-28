@@ -1,18 +1,26 @@
-import express from 'express'
-import {getTest} from './openai'
+import express from "express";
+import { getTest } from "./openai";
+import cors from "cors";
+const port = 7001;
+const app = express();
 
-const app = express()
-const router = express.Router()
+app.use(cors());
 
-router.get('/config', async (req, res) => {
-  getTest()
+const router = express.Router();
 
-  const data = {
-    t1: 666,
-  }
-  res.send(data)
-})
+router.get("", (req, res) => {
+  res.send({});
+});
+router.post("", async (req, res) => {
+  res.setHeader("Content-type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
 
-app.use('', router)
+  getTest(res)
+});
 
-app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))
+app.use("", router);
+
+app.listen(port, () =>
+  globalThis.console.log(`Server is running on port ${port}`)
+);
