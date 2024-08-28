@@ -6,17 +6,21 @@ const app = express();
 
 app.use(cors());
 
+// post json数据
+app.use(express.json())
+
 const router = express.Router();
 
-router.get("", (req, res) => {
+router.post("/test", (req, res) => {
+  console.log(req.body);
   res.send({});
 });
-router.post("", async (req, res) => {
+router.post("/session", async (req, res) => {
   res.setHeader("Content-type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
-  getTest(res)
+  getTest(req, res)
 });
 
 app.use("", router);

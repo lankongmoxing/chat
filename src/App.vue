@@ -7,13 +7,20 @@ const text = ref("");
 const messageArr: Ref<string[]> = ref([]);
 const loading = ref(false);
 const status = ref(false);
+const content = ref("");
 function test() {
   loading.value = true;
   status.value = true;
-  fetchEventSource(`${import.meta.env.VITE_APP_BASE_API}`, {
+  fetchEventSource(`${import.meta.env.VITE_APP_BASE_API}/session`, {
     method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: content.value,
+    }),
     onopen(response) {
-      console.log("on open", response);
+      console.log("1 on open", response);
       loading.value = false;
       setTimeout(() => {
         setWords();
@@ -21,7 +28,9 @@ function test() {
       return Promise.resolve();
     },
     onmessage(event) {
-      messageArr.value.push(event.data);
+      console.log("on message", event);
+      const data = JSON.parse(event.data);
+      messageArr.value.push(data.content);
     },
     onerror(err) {
       console.log("on err", err);
@@ -37,10 +46,10 @@ function test() {
 function setWords() {
   let index = 0;
   const timer = setInterval(() => {
-    text.value += messageArr.value[index];
-    index++;
-
-    if (messageArr.value.length === index && !status.value) {
+    if (messageArr.value.length !== index) {
+      text.value += messageArr.value[index];
+      index++;
+    } else if (!status.value) {
       clearInterval(timer);
     }
   }, 200);
@@ -50,24 +59,14 @@ function setWords() {
 <template>
   <div id="content">
     {{ text }}
-
   </div>
-  <n-input placeholder="请输入"></n-input>
-  <n-button @click="test">发送</n-button>
+  <n-input v-model:value="content" placeholder="请输入"></n-input>
+  <n-button @click="test">发送123</n-button>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+#content {
+  white-space: pre-line;
 }
 #content::after {
   content: "|";
