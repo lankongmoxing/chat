@@ -1,6 +1,8 @@
 import express from "express";
 import { getTest } from "./openai";
 import cors from "cors";
+import * as dotenv from 'dotenv'
+dotenv.config()
 const port = 7001;
 const app = express();
 

@@ -61,7 +61,7 @@ function setWords() {
     {{ text }}
   </div>
   <n-input v-model:value="content" placeholder="请输入"></n-input>
-  <n-button @click="test">发送123</n-button>
+  <n-button @click="test">发送</n-button>
 </template>
 
 <style scoped>
